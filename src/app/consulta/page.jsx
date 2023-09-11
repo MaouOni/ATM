@@ -6,7 +6,7 @@ export default function consulta() {
   return (
     <div>
       <div>
-        <DatosTexto titulo={"Bienvedio"} dato={"Diego"} ></DatosTexto>
+        <DatosTexto titulo={"Bienvedio"} dato={"Diego"}></DatosTexto>
       </div>
       <Layout />
     </div>
