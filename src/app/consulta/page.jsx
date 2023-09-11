@@ -1,13 +1,14 @@
-import React from 'react'
-import Layout from '../components/Layout'
+import React from "react";
+import Layout from "../components/Layout";
+import DatosTexto from "../components/datosTexto/datosTexto";
 
 export default function consulta() {
   return (
-    <>
     <div>
-  <h1>Su saldo es de: </h1>
-  </div>
-  <Layout />
-  </>
-  )
+      <div>
+        <DatosTexto titulo={"Bienvedio"} dato={"Diego"} ></DatosTexto>
+      </div>
+      <Layout />
+    </div>
+  );
 }
