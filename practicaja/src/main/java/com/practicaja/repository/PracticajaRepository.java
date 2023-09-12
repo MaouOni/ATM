@@ -195,7 +195,6 @@ public class PracticajaRepository implements PracticajaServices{
 			throw new Exception("5001", e.getMessage());
 		}
 
-		return movimiento;
-		
+		return movimiento;		
 	}
 }

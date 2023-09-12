@@ -110,4 +110,26 @@ public class PracticajaController {
 			return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
 		}		
 	}
+
+	@RequestMapping(value = "/transferir", method = RequestMethod.POST)
+	public ResponseEntity transferir(@RequestParam double montoTransferencia,HttpServletRequest request)
+	{		
+		Cuenta cuentaOrigen = null;
+		Cuenta cuentaDestino = null;
+		Movimiento movimiento = null;
+		try {
+			sesion = request.getSession();
+			cuentaOrigen = (Cuenta) sesion.getAttribute("datosCuenta");
+			cuentaDestino = (Cuenta) sesion.getAttribute("cuentaDestino");
+			if(cuentaDestino != null){
+				//movimiento = pc.transferir(montoDeposito, cuentaDestino);			
+				return new ResponseEntity(movimiento, HttpStatus.OK);
+			}else{
+				return new ResponseEntity("No existe sesión", HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+		} catch (Exception e) {
+			return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
+		}		
+	}
 }
