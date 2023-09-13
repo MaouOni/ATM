@@ -122,7 +122,7 @@ public class PracticajaController {
 			cuentaOrigen = (Cuenta) sesion.getAttribute("datosCuenta");
 			cuentaDestino = (Cuenta) sesion.getAttribute("cuentaDestino");
 			if(cuentaDestino != null){
-				//movimiento = pc.transferir(montoDeposito, cuentaDestino);			
+				movimiento = pc.transferencia(montoTransferencia, cuentaOrigen, cuentaDestino);
 				return new ResponseEntity(movimiento, HttpStatus.OK);
 			}else{
 				return new ResponseEntity("No existe sesión", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -132,4 +132,27 @@ public class PracticajaController {
 			return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
 		}		
 	}
+
+	@RequestMapping(value = "/listarServicios", method = RequestMethod.GET)
+	public ResponseEntity listarServicios(@RequestParam double montoTransferencia,HttpServletRequest request)
+	{		
+		Cuenta cuentaOrigen = null;
+		Cuenta cuentaDestino = null;
+		Movimiento movimiento = null;
+		try {
+			sesion = request.getSession();
+			cuentaOrigen = (Cuenta) sesion.getAttribute("datosCuenta");
+			cuentaDestino = (Cuenta) sesion.getAttribute("cuentaDestino");
+			if(cuentaDestino != null){
+				movimiento = pc.transferencia(montoTransferencia, cuentaOrigen, cuentaDestino);
+				return new ResponseEntity(movimiento, HttpStatus.OK);
+			}else{
+				return new ResponseEntity("No existe sesión", HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+		} catch (Exception e) {
+			return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
+		}		
+	}
+
 }

@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import com.practicaja.beans.Cuenta;
 import com.practicaja.beans.Movimiento;
+import com.practicaja.beans.Servicio;
+import com.practicaja.beans.Transferencia;
 import com.practicaja.common.Exception;
 import com.practicaja.services.PracticajaServices;
 
@@ -196,5 +199,56 @@ public class PracticajaRepository implements PracticajaServices{
 		}
 
 		return movimiento;		
+	}
+
+	@Override
+	public Transferencia transferencia(double montoTransferencia, Cuenta cuentaOrigen, Cuenta cuentaDestino) throws Exception {
+		String query = "INSERT INTO Movimientos (tipoMovimiento, Importe, fechaMovimiento, Cuenta_noCuenta, Cuenta_Banco_idBanco, Cuenta_Usuario_idUsuario, noCuentaDestino) VALUES ('Transferencia', " + montoTransferencia + ", CURDATE(), " + cuentaOrigen.getNoCuenta() + ", " + cuentaOrigen.getIdBanco() + ", " + cuentaOrigen.getIdUsuario() + ", '"+cuentaDestino.getNoCuenta()+"')";
+		double saldoFinal = 0;
+		Transferencia movimiento = null;
+		try {
+			conexion = this.jdbcTemplate.getDataSource().getConnection();
+			conexion.setAutoCommit(false);
+			stm = conexion.createStatement();
+			System.out.println(query);
+			stm.executeUpdate(query);
+			saldoFinal = cuentaDestino.getSaldo() + montoTransferencia;
+			query = "UPDATE Cuenta SET saldo = " + saldoFinal + " WHERE noCuenta = " + cuentaDestino.getNoCuenta() + "";
+			System.out.println(query);
+			stm.executeUpdate(query);
+			saldoFinal = cuentaOrigen.getSaldo() - montoTransferencia;
+			query = "UPDATE Cuenta SET saldo = " + saldoFinal + " WHERE noCuenta = " + cuentaOrigen.getNoCuenta() + "";
+			System.out.println(query);
+			stm.executeUpdate(query);
+			conexion.commit();
+
+			query = "select * from Movimientos where tipoMovimiento = 'Transferencia' and Importe = "+montoTransferencia+" and Cuenta_noCuenta = "+cuentaOrigen.getNoCuenta()+" and noCuentaDestino = "+cuentaDestino.getNoCuenta()+"";
+			rs = stm.executeQuery(query);
+			if(rs.next()){
+				movimiento = new Transferencia(
+					rs.getInt(1),
+					rs.getString(2),
+					rs.getDouble(3),
+					rs.getString(4),
+					rs.getInt(5),
+					rs.getInt(6),
+					rs.getInt(7),
+					rs.getInt(8)
+					);
+			}
+			else{
+				throw new Exception("6000", "Ocurrió un error al transferir");
+			}
+		} catch (SQLException e) {
+			//rollback
+			//conexion.rollback();
+			throw new Exception("6001", e.getMessage());
+		}
+		return movimiento;
+	}
+	@Override
+	public List<Servicio> listarServicios() throws Exception {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'listarServicios'");
 	}
 }
